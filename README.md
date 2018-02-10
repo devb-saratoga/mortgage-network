@@ -1,4 +1,3 @@
-# com.devb.mortgage
 # Selling homes the {"Blockchain": "DLT"} way
 
 Read the introduction here at https://www.devb.com/devbpaper-blockchain.php
