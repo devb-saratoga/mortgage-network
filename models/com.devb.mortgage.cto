@@ -1,0 +1,256 @@
+/**
+ * Realty sales and mortgage model
+ * Author: Dev Bhattacharyya
+ * Released under Apache-2.0 license  
+ * Reference: http://www.freddiemac.com/singlefamily/sell/docs/Freddie_Mac_ULDD_Phase_3_Implementation_Guide.pdf
+ */
+
+namespace com.devb.mortgage
+
+/**
+ * Some of the enumerations may not apply to a person
+ * it may geared more towards a role or 
+ * an organization
+ */
+enum PersonRoleType {
+  o ASSET_OWNER
+  o APPRAISER
+  o APPRAISER_SUPERVISOR
+  o BORROWER
+  o BUYER
+  o DOCUMENT_CUSTODIAN
+  o HOMEOWNERS_ASSOCIATION
+  o LISTING_AGENT
+  o LOAN_DELIVERY_FILE_PREPARER
+  o LOAN_ORIGINATION_COMPANY
+  o LOAN_ORIGINATOR
+  o LOAN_SELLER
+  o LENDER
+  o NOTE_PAY_TO
+  o OTHER
+  o PAYEE
+  o PROPERTY_SELLER
+  o REALTOR
+  o SELLER
+  o SERVICER
+  o WAREHOUSE_LENDER 
+}
+
+enum PropertyType {
+  o SINGLE_FAMILY
+  o CONDOMINIUM
+  o APARTMENT
+  o MULTIPLE_FAMILY
+  o PREFABRICATED
+  o MOBILE_HOME
+}
+
+enum PropertyStandardStatus {
+  o LISTED
+  o ACTIVE
+  o ACTIVE_UNDER_CONTRACT
+  o PENDING
+  o HOLD
+  o WITHDRAWN
+  o CLOSED
+  o EXPIRED
+  o CANCELED
+  o DELETE
+  o INCOMPLETE
+  o COMING_SOON
+}
+
+enum LoanTypes {
+  o ADJUSTMENT
+  o ARM
+  o AFFORDABLE_LENDING
+  o AMORTIZATION
+  o BUYDOWN
+  o CONSTRUCTION
+  o CREDIT_ENHANCEMENTS
+  o DRAW
+  o FHA
+  o FIXED_15
+  o FIXED_30
+  o GOVERNMENT_LOAN
+  o HELOC
+  o HMDA_LOAN
+  o INTEREST_ONLY
+  o REFINANCE
+  o RESPA
+  o USDA
+  o VA
+}
+
+enum LoanStatusType {
+  o NONE
+  o AT_CLOSING
+  o AT_MODIFICATION
+  o AT_CLOSING_NON_MOD
+  o AT_CLOSING_MOD 
+  o AT_CONVERSION
+  o AT_RESET
+  o CURRENT   
+}
+
+enum LoanRoleType {
+  o SUBJECT_LOAN
+  o RELATED_LOAN
+}
+
+asset OtherAsset identified by assetId {
+  o String assetId
+  o String assetName
+}
+
+asset PropertyHome identified by propertyId {
+  o String propertyId
+  o String propertyName
+  o PropertyType propertyType
+  o PropertyStandardStatus propertyState
+  o Boolean isListed optional
+  --> Person listingAgent 
+  o String address
+  o String city
+  o String state
+  o String zip
+  o Double value
+  o DateTime listingStart
+  o DateTime listingEnd
+}
+
+asset EscrowBook identified by escrowId {
+  o String escrowId
+  --> PropertyHome home
+  --> Person buyer
+  --> Person keeper
+  o Double sellValue
+  o Double downPayment
+  o Double heldInEscrow
+  o Double promisedPayment
+  o Double mortgagePayment
+  o String document
+}
+
+/**
+ * These concepts and assets are 
+ * used in the Fannie Mae / Freddie Mac
+ * ULDD / URLA construct
+ */
+
+concept Loan {
+  o String loanId
+  o LoanTypes loanType
+  o String investorFeature
+  o String loanComments
+  o String loanDetail
+  o String loanLevelCredit
+  o String loanPrograms
+  o LoanStatusType loanState
+  o Double ltv
+  o String maturity
+  o String mers_registrations
+  o String mi_data
+  o String modifications
+  o String optional_products
+  o Double payment
+  o String prepayment_Penalty
+  o String qualification
+  o String servicing
+  o String termsOfMortgage
+  o String underwriting
+}
+
+concept Deal {
+  o String dealId
+  --> OtherAsset otherAsset
+  --> PropertyHome collateral
+  o Loan loan
+  o Double combinedLTV
+  --> Party partyRoles
+}
+
+concept DealSet {
+  o String dealSetId
+  o Deal deal
+  --> Person investorFeature
+  --> Party partyRoles
+  o String pool 
+}
+
+concept DealSets {
+  o String dealSetsId
+  o DealSet dealSet
+  --> Party partyRoles
+  o ULDDGovernmentMonitoring ulddGovtMonitoring
+}
+
+concept ULDDGovernmentMonitoring {
+  o String ulddGovtId
+  o String hmdaEthnicity
+  o String hmdaEthnicityOrigin
+  o String hmdaRaceDesignation
+  o String hmdaRaceDetail
+}
+
+asset ULDD30 identified by loanId {
+  o String loanId
+  o LoanTypes loadIdType
+  o String aboutVersion
+  o DealSets dealSets
+}
+
+participant Party identified by partyId {
+  o String partyId
+  --> Person[] party
+  o ContactPoint[] contactPoint
+  o String name
+  o Address[] address
+  o PersonRoleType role
+  o String taxIdentifier
+}
+
+concept ContactPoint {
+  o String contactId
+  o String contactPoint
+}
+
+concept Address {
+  o String addressId
+  o String addressLine1
+  o String addressLine2
+  o String city
+  o String state
+  o String postalCode
+}
+
+participant Person identified by personId {
+  o String personId
+  o PersonRoleType personRoleType
+  o String governmentId
+  o String firstName
+  o String lastName
+}
+
+transaction ListProperty {
+  --> PropertyHome home
+  o Boolean listed
+}
+
+transaction Revalue {
+  --> PropertyHome home
+  o String newValue
+}
+
+transaction Escrow {
+  --> EscrowBook escrowBook
+  --> Person buyer
+  o Double money
+  o String document
+}
+
+event OtherEvent {
+  --> PropertyHome home
+  o Double oldValue
+  o Double newValue
+}
