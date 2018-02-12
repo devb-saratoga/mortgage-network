@@ -243,6 +243,10 @@ transaction Revalue {
   o String newValue
 }
 
+transaction GenerateULDD {
+  --> ULDD30 fnmOverlay
+}
+
 transaction Escrow {
   --> EscrowBook escrowBook
   --> Person buyer
