@@ -40,7 +40,7 @@ $ composer network ping --card admin@mortgage-network
 $ composer-rest-server -c admin@mortgage-network -n never -w true
 
 #### Use Cases
-Seller Joh Doe owns a Condo on a lake property. Listing agent Jane Smith creates the initial listing of the property.
+Seller John Doe owns a Condo on a lake property. Listing agent Jane Smith creates the initial listing of the property.
 Potential Buyer is Rod Stewart.
 
 ##### Persons
