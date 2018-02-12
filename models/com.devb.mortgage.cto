@@ -2,7 +2,7 @@
  * Realty sales and mortgage model
  * Author: Dev Bhattacharyya
  * Released under Apache-2.0 license  
- * Version 0.0.1
+ * Version 0.0.2 (Revised 2/12/18)
  * Reference: http://www.freddiemac.com/singlefamily/sell/docs/Freddie_Mac_ULDD_Phase_3_Implementation_Guide.pdf
  */
 
@@ -99,7 +99,7 @@ enum LoanRoleType {
   o RELATED_LOAN
 }
 
-asset OtherAsset identified by assetId {
+concept OtherAsset {
   o String assetId
   o String assetName
 }
@@ -142,7 +142,7 @@ asset EscrowBook identified by escrowId {
 concept Loan {
   o String loanId
   o LoanTypes loanType
-  o String investorFeature
+  o String investorFeature optional
   o String loanComments
   o String loanDetail
   o String loanLevelCredit
@@ -164,8 +164,8 @@ concept Loan {
 
 concept Deal {
   o String dealId
-  --> OtherAsset otherAsset
-  --> PropertyHome collateral
+  o OtherAsset otherAsset optional
+  --> PropertyHome collateral optional
   o Loan loan
   o Double combinedLTV
   --> Party partyRoles
@@ -175,14 +175,14 @@ concept DealSet {
   o String dealSetId
   o Deal deal
   --> Person investorFeature
-  --> Party partyRoles
+  --> Party partyRoles optional
   o String pool 
 }
 
 concept DealSets {
   o String dealSetsId
   o DealSet dealSet
-  --> Party partyRoles
+  --> Party partyRoles optional
   o ULDDGovernmentMonitoring ulddGovtMonitoring
 }
 
@@ -203,7 +203,7 @@ asset ULDD30 identified by loanId {
 
 participant Party identified by partyId {
   o String partyId
-  --> Person[] party
+  --> Person[] persons
   o ContactPoint[] contactPoint
   o String name
   o Address[] address
