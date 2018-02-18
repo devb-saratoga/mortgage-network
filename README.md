@@ -1,6 +1,7 @@
 # Selling homes the {"Blockchain": "DLT"} way
 
 UML Design of the Ledger Model
+![UML Diagram of the model](test/art0509.png)
 
 Read the introduction here at https://www.devb.com/devbpaper-blockchain.php
 
